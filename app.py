@@ -4,7 +4,7 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 conn = mysql.connector.connect(
-    host="54.84.46.182",
+    host="44.193.107.126",
     user="root",
     password="password",
     database="helpdesk"
