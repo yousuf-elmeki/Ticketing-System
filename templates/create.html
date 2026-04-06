@@ -1,5 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Create Ticket</h1>
+
 <form method="POST">
-  <input name="title">
-  <textarea name="description"></textarea>
-  <button type="submit">Submit</button>
+    <label>Title:</label><br>
+    <input type="text" name="title" required><br><br>
+
+    <label>Description:</label><br>
+    <textarea name="description" required></textarea><br><br>
+
+    <button type="submit">Submit Ticket</button>
 </form>
+
+{% endblock %}
