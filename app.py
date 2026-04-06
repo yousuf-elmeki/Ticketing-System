@@ -1,18 +1,18 @@
-import mysql.connector
 from flask import Flask, render_template, request, redirect
+import mysql.connector
 
 app = Flask(__name__)
 
-# Config details
-db_config = {
-    "host": "44.193.107.126",
-    "user": "root",
-    "password": "password",
-    "database": "helpdesk"
-}
-
+# 🔹 DATABASE CONNECTION FUNCTION
 def get_db_connection():
-    return mysql.connector.connect(**db_config)
+    return mysql.connector.connect(
+        host="44.193.107.126",
+        user="root",
+        password="password",
+        database="helpdesk"
+    )
+
+# -------- ROUTES --------
 
 @app.route("/")
 def home():
@@ -26,33 +26,15 @@ def test():
 def about():
     return render_template("about.html")
 
+
+
 @app.route("/tickets")
 def tickets():
-    # 1. Connect to the DB
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
 
-@app.route("/create", methods=["GET", "POST"])
-def create_ticket():
-    if request.method == "POST":
-        title = request.form["title"]
-        description = request.form["description"]
-
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT INTO Ticket (title, description, user_id, status_id, priority_id)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (title, description, 1, 1, 1))  # default values for now
-
-        conn.commit()
-
-        return redirect("/tickets")
-
-    return render_template("create.html")
-    # 2. Execute the join query
     cursor.execute("""
-        SELECT t.ticket_id, t.title, t.description, u.full_name, 
+        SELECT t.title, t.description, u.full_name,
                s.status_label, p.priority_level
         FROM Ticket t
         JOIN User u ON t.user_id = u.user_id
@@ -60,13 +42,39 @@ def create_ticket():
         JOIN Priority p ON t.priority_id = p.priority_id
     """)
 
-    tickets_data = cursor.fetchall()
-    
-    # 3. Close the "worker" and the connection
+    tickets = cursor.fetchall()
+
     cursor.close()
     db.close()
 
-    return render_template("tickets.html", tickets=tickets_data)
+    return render_template("tickets.html", tickets=tickets)
 
+
+
+@app.route("/create", methods=["GET", "POST"])
+def create_ticket():
+    if request.method == "POST":
+        title = request.form["title"]
+        description = request.form["description"]
+
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        cursor.execute("""
+            INSERT INTO Ticket (title, description, user_id, status_id, priority_id)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (title, description, 1, 1, 1))
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return redirect("/tickets")
+
+    return render_template("create.html")
+
+
+# -------- RUN APP --------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
