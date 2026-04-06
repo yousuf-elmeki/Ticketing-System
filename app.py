@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
@@ -32,6 +32,24 @@ def tickets():
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
 
+@app.route("/create", methods=["GET", "POST"])
+def create_ticket():
+    if request.method == "POST":
+        title = request.form["title"]
+        description = request.form["description"]
+
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO Ticket (title, description, user_id, status_id, priority_id)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (title, description, 1, 1, 1))  # default values for now
+
+        conn.commit()
+
+        return redirect("/tickets")
+
+    return render_template("create.html")
     # 2. Execute the join query
     cursor.execute("""
         SELECT t.ticket_id, t.title, t.description, u.full_name, 
