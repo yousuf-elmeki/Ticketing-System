@@ -3,7 +3,9 @@ import mysql.connector
 
 app = Flask(__name__)
 
-# DB CONNECTION
+# -------------------------
+# DATABASE CONNECTION
+# -------------------------
 db = mysql.connector.connect(
     host="44.193.107.126",
     user="root",
@@ -11,34 +13,46 @@ db = mysql.connector.connect(
     database="helpdesk"
 )
 
+# -------------------------
 # HOME
+# -------------------------
 @app.route("/")
 def home():
     return render_template("index.html")
 
+# -------------------------
 # ABOUT
+# -------------------------
 @app.route("/about")
 def about():
     return render_template("about.html")
 
-# VIEW TICKETS (JOIN REQUIRED)
+# -------------------------
+# VIEW TICKETS
+# -------------------------
 @app.route("/tickets")
 def tickets():
-    cursor = db.cursor(dictionary=True)
+    try:
+        cursor = db.cursor(dictionary=True)
 
-    cursor.execute("""
-        SELECT t.ticket_id, t.title, t.description,
-               u.full_name, s.status_label, p.priority_level
-        FROM Ticket t
-        JOIN User u ON t.user_id = u.user_id
-        JOIN Status s ON t.status_id = s.status_id
-        JOIN Priority p ON t.priority_id = p.priority_id
-    """)
+        cursor.execute("""
+            SELECT t.ticket_id, t.title, t.description,
+                   u.full_name, s.status_label, p.priority_level
+            FROM Ticket t
+            JOIN User u ON t.user_id = u.user_id
+            JOIN Status s ON t.status_id = s.status_id
+            JOIN Priority p ON t.priority_id = p.priority_id
+        """)
 
-    tickets = cursor.fetchall()
-    return render_template("tickets.html", tickets=tickets)
+        tickets = cursor.fetchall()
+        return render_template("tickets.html", tickets=tickets)
 
-# CREATE
+    except Exception as e:
+        return f"Error loading tickets: {str(e)}"
+
+# -------------------------
+# CREATE TICKET
+# -------------------------
 @app.route("/create", methods=["GET", "POST"])
 def create_ticket():
     if request.method == "POST":
@@ -47,6 +61,8 @@ def create_ticket():
             description = request.form["description"]
 
             cursor = db.cursor()
+
+            # NOTE: Make sure these IDs exist in your DB
             cursor.execute("""
                 INSERT INTO Ticket (title, description, user_id, status_id, priority_id)
                 VALUES (%s, %s, %s, %s, %s)
@@ -55,18 +71,20 @@ def create_ticket():
             db.commit()
             return redirect("/tickets")
 
-        except:
-            return render_template("error.html")
+        except Exception as e:
+            return f"Error creating ticket: {str(e)}"
 
     return render_template("create.html")
 
-# UPDATE
+# -------------------------
+# UPDATE TICKET
+# -------------------------
 @app.route("/update/<int:ticket_id>", methods=["GET", "POST"])
 def update_ticket(ticket_id):
-    cursor = db.cursor(dictionary=True)
+    try:
+        cursor = db.cursor(dictionary=True)
 
-    if request.method == "POST":
-        try:
+        if request.method == "POST":
             status_id = request.form["status"]
             priority_id = request.form["priority"]
 
@@ -79,30 +97,52 @@ def update_ticket(ticket_id):
             db.commit()
             return redirect("/tickets")
 
-        except:
-            return render_template("error.html")
+        cursor.execute("SELECT * FROM Ticket WHERE ticket_id = %s", (ticket_id,))
+        ticket = cursor.fetchone()
 
-    cursor.execute("SELECT * FROM Ticket WHERE ticket_id = %s", (ticket_id,))
-    ticket = cursor.fetchone()
+        cursor.execute("SELECT * FROM Status")
+        statuses = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Status")
-    statuses = cursor.fetchall()
+        cursor.execute("SELECT * FROM Priority")
+        priorities = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM Priority")
-    priorities = cursor.fetchall()
+        return render_template("update.html",
+                               ticket=ticket,
+                               statuses=statuses,
+                               priorities=priorities)
 
-    return render_template("update.html", ticket=ticket, statuses=statuses, priorities=priorities)
+    except Exception as e:
+        return f"Error updating ticket: {str(e)}"
 
-# DELETE
+# -------------------------
+# DELETE TICKET
+# -------------------------
 @app.route("/delete/<int:ticket_id>")
 def delete_ticket(ticket_id):
     try:
         cursor = db.cursor()
+
         cursor.execute("DELETE FROM Ticket WHERE ticket_id = %s", (ticket_id,))
         db.commit()
-        return redirect("/tickets")
-    except:
-        return render_template("error.html")
 
+        return redirect("/tickets")
+
+    except Exception as e:
+        return f"Error deleting ticket: {str(e)}"
+
+# -------------------------
+# ERROR HANDLER
+# -------------------------
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("error.html"), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template("error.html"), 500
+
+# -------------------------
+# RUN APP
+# -------------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)
