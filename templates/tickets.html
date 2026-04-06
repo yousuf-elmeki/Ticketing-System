@@ -1,19 +1,26 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Tickets</h1>
+<h1>All Tickets</h1>
 
 {% for ticket in tickets %}
-<div style="border:1px solid black; margin:10px; padding:10px;">
+<div style="border:1px solid gray; padding:10px; margin:10px;">
     <h3>{{ ticket.title }}</h3>
     <p>{{ ticket.description }}</p>
-    <p><strong>User:</strong> {{ ticket.full_name }}</p>
-    <p><strong>Status:</strong> {{ ticket.status_label }}</p>
-    <p><strong>Priority:</strong> {{ ticket.priority_level }}</p>
+
+    <p><b>User:</b> {{ ticket.full_name }}</p>
+    <p><b>Status:</b> {{ ticket.status_label }}</p>
+    <p><b>Priority:</b> {{ ticket.priority_level }}</p>
 
     <a href="/update/{{ ticket.ticket_id }}">Update</a> |
     <a href="/delete/{{ ticket.ticket_id }}">Delete</a>
 </div>
 {% endfor %}
+{% endblock %}
+🔹 Create error.html
+{% extends "layout.html" %}
 
+{% block content %}
+<h1>Error</h1>
+<p>Something went wrong. Please try again.</p>
 {% endblock %}
