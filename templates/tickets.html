@@ -4,13 +4,16 @@
 <h1>Tickets</h1>
 
 {% for ticket in tickets %}
-    <div style="border:1px solid black; margin:10px; padding:10px;">
-        <h3>{{ ticket.title }}</h3>
-        <p>{{ ticket.description }}</p>
-        <p><strong>User:</strong> {{ ticket.full_name }}</p>
-        <p><strong>Status:</strong> {{ ticket.status_label }}</p>
-        <p><strong>Priority:</strong> {{ ticket.priority_level }}</p>
-    </div>
+<div style="border:1px solid black; margin:10px; padding:10px;">
+    <h3>{{ ticket.title }}</h3>
+    <p>{{ ticket.description }}</p>
+    <p><strong>User:</strong> {{ ticket.full_name }}</p>
+    <p><strong>Status:</strong> {{ ticket.status_label }}</p>
+    <p><strong>Priority:</strong> {{ ticket.priority_level }}</p>
+
+    <a href="/update/{{ ticket.ticket_id }}">Update</a> |
+    <a href="/delete/{{ ticket.ticket_id }}">Delete</a>
+</div>
 {% endfor %}
 
 {% endblock %}
