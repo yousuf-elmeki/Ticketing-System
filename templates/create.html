@@ -1,16 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Create Ticket</h1>
+<h2>Create Ticket</h2>
 
 <form method="POST">
-    <label>Title:</label><br>
-    <input type="text" name="title" required><br><br>
-
-    <label>Description:</label><br>
-    <textarea name="description" required></textarea><br><br>
-
-    <button type="submit">Submit Ticket</button>
+    <input name="title" placeholder="Title" required><br><br>
+    <textarea name="description" placeholder="Description" required></textarea><br><br>
+    <button>Submit</button>
 </form>
 
 {% endblock %}

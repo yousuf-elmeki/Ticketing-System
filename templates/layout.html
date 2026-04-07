@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Helpdesk System</title>
+<title>Helpdesk</title>
 </head>
 <body>
 
 <nav>
-     <a href="/">Home</a> |
-    <a href="/tickets">Tickets</a> |
-    <a href="/create">Create Ticket</a> |
-    <a href="/about">About</a>
+<a href="/">Home</a> |
+<a href="/tickets">Tickets</a> |
+<a href="/create">Create</a> |
+<a href="/signup">Signup</a> |
+<a href="/login">Login</a> |
+<a href="/logout">Logout</a>
 </nav>
 
 <hr>
+
+{% if session.email %}
+<p>Logged in as {{ session.email }}</p>
+{% endif %}
 
 {% block content %}{% endblock %}
 

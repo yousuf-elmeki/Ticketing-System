@@ -1,31 +1,25 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Update Ticket</h1>
+<h2>Update Ticket</h2>
 
 <form method="POST">
 
-    <label>Status:</label><br>
-    <select name="status">
-        {% for s in statuses %}
-            <option value="{{ s.status_id }}"
-                {% if s.status_id == ticket.status_id %}selected{% endif %}>
-                {{ s.status_label }}
-            </option>
-        {% endfor %}
-    </select><br><br>
+<select name="status">
+{% for s in statuses %}
+<option value="{{ s.status_id }}">{{ s.status_label }}</option>
+{% endfor %}
+</select>
 
-    <label>Priority:</label><br>
-    <select name="priority">
-        {% for p in priorities %}
-            <option value="{{ p.priority_id }}"
-                {% if p.priority_id == ticket.priority_id %}selected{% endif %}>
-                {{ p.priority_level }}
-            </option>
-        {% endfor %}
-    </select><br><br>
+<select name="priority">
+{% for p in priorities %}
+<option value="{{ p.priority_id }}">{{ p.priority_level }}</option>
+{% endfor %}
+</select>
 
-    <button type="submit">Update</button>
+<br><br>
+<button>Update</button>
+
 </form>
 
 {% endblock %}
