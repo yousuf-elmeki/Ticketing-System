@@ -4,14 +4,15 @@ import mysql.connector
 app = Flask(__name__)
 
 # -------------------------
-# DATABASE CONNECTION
+# DATABASE CONNECTION FUNCTION
 # -------------------------
-db = mysql.connector.connect(
-    host="44.193.107.126",
-    user="root",
-    password="password",
-    database="helpdesk"
-)
+def get_db_connection():
+    return mysql.connector.connect(
+        host="44.193.107.126",
+        user="root",
+        password="password",
+        database="helpdesk"
+    )
 
 # -------------------------
 # HOME
@@ -33,7 +34,8 @@ def about():
 @app.route("/tickets")
 def tickets():
     try:
-        cursor = db.cursor(dictionary=True)
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
 
         cursor.execute("""
             SELECT t.ticket_id, t.title, t.description,
@@ -45,6 +47,8 @@ def tickets():
         """)
 
         tickets = cursor.fetchall()
+        conn.close()
+
         return render_template("tickets.html", tickets=tickets)
 
     except Exception as e:
@@ -60,15 +64,18 @@ def create_ticket():
             title = request.form["title"]
             description = request.form["description"]
 
-            cursor = db.cursor()
+            conn = get_db_connection()
+            cursor = conn.cursor()
 
-            # NOTE: Make sure these IDs exist in your DB
+            # Make sure these IDs exist in your database
             cursor.execute("""
                 INSERT INTO Ticket (title, description, user_id, status_id, priority_id)
                 VALUES (%s, %s, %s, %s, %s)
             """, (title, description, 1, 1, 1))
 
-            db.commit()
+            conn.commit()
+            conn.close()
+
             return redirect("/tickets")
 
         except Exception as e:
@@ -82,7 +89,8 @@ def create_ticket():
 @app.route("/update/<int:ticket_id>", methods=["GET", "POST"])
 def update_ticket(ticket_id):
     try:
-        cursor = db.cursor(dictionary=True)
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
 
         if request.method == "POST":
             status_id = request.form["status"]
@@ -94,7 +102,9 @@ def update_ticket(ticket_id):
                 WHERE ticket_id = %s
             """, (status_id, priority_id, ticket_id))
 
-            db.commit()
+            conn.commit()
+            conn.close()
+
             return redirect("/tickets")
 
         cursor.execute("SELECT * FROM Ticket WHERE ticket_id = %s", (ticket_id,))
@@ -105,6 +115,8 @@ def update_ticket(ticket_id):
 
         cursor.execute("SELECT * FROM Priority")
         priorities = cursor.fetchall()
+
+        conn.close()
 
         return render_template("update.html",
                                ticket=ticket,
@@ -120,10 +132,12 @@ def update_ticket(ticket_id):
 @app.route("/delete/<int:ticket_id>")
 def delete_ticket(ticket_id):
     try:
-        cursor = db.cursor()
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
         cursor.execute("DELETE FROM Ticket WHERE ticket_id = %s", (ticket_id,))
-        db.commit()
+        conn.commit()
+        conn.close()
 
         return redirect("/tickets")
 
@@ -131,7 +145,7 @@ def delete_ticket(ticket_id):
         return f"Error deleting ticket: {str(e)}"
 
 # -------------------------
-# ERROR HANDLER
+# ERROR HANDLERS
 # -------------------------
 @app.errorhandler(404)
 def not_found(e):
