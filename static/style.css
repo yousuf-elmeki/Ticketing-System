@@ -11,9 +11,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
+    padding: 10px 30px;
     background: white;
     border-bottom: 1px solid #eee;
+}
+
+/* LOGO SIZE*/
+.navbar img {
+    height: 60px;   /* smaller logo */
 }
 
 .logo-container {
