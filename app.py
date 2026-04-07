@@ -249,29 +249,36 @@ def update_ticket(ticket_id):
 # =========================
 @app.route("/delete/<int:ticket_id>")
 def delete_ticket(ticket_id):
+    # Must be logged in
     if "user_id" not in session:
         return redirect("/login")
 
     cursor = db.cursor(dictionary=True)
 
+    # Check if ticket exists
     cursor.execute("SELECT user_id FROM Ticket WHERE ticket_id=%s", (ticket_id,))
     owner = cursor.fetchone()
 
     if not owner:
         return "Ticket not found"
 
+    # Check permission (admin OR owner)
     if session.get("role") != "admin" and owner["user_id"] != session["user_id"]:
         return "Access denied"
 
-    cursor = db.cursor()
+    try:
+        cursor = db.cursor()
 
-    # DELETE COMMENTS FIRST
-    cursor.execute("DELETE FROM Comment WHERE ticket_id=%s", (ticket_id,))
+        # Delete related comments FIRST (prevents foreign key crash)
+        cursor.execute("DELETE FROM Comment WHERE ticket_id=%s", (ticket_id,))
 
-    # THEN DELETE TICKET
-    cursor.execute("DELETE FROM Ticket WHERE ticket_id=%s", (ticket_id,))
+        # Delete the ticket
+        cursor.execute("DELETE FROM Ticket WHERE ticket_id=%s", (ticket_id,))
 
-    db.commit()
+        db.commit()
+
+    except Exception as e:
+        return f"Error deleting ticket: {e}"
 
     return redirect("/tickets")
 
