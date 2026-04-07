@@ -257,11 +257,20 @@ def delete_ticket(ticket_id):
     cursor.execute("SELECT user_id FROM Ticket WHERE ticket_id=%s", (ticket_id,))
     owner = cursor.fetchone()
 
+    if not owner:
+        return "Ticket not found"
+
     if session.get("role") != "admin" and owner["user_id"] != session["user_id"]:
         return "Access denied"
 
     cursor = db.cursor()
+
+    # DELETE COMMENTS FIRST
+    cursor.execute("DELETE FROM Comment WHERE ticket_id=%s", (ticket_id,))
+
+    # THEN DELETE TICKET
     cursor.execute("DELETE FROM Ticket WHERE ticket_id=%s", (ticket_id,))
+
     db.commit()
 
     return redirect("/tickets")
