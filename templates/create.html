@@ -1,20 +1,24 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2>Create Ticket</h2>
 
-<form method="POST">
-    <input name="title" placeholder="Title" required><br><br>
-    <textarea name="description" placeholder="Description" required></textarea><br><br>
+<div class="card">
+    <h2>Create Ticket</h2>
 
-    <label>Category:</label><br>
-    <select name="category" required>
-        {% for c in categories %}
-        <option value="{{ c.category_id }}">{{ c.category_label }}</option>
-        {% endfor %}
-    </select><br><br>
+    <form method="POST">
+        <input name="title" placeholder="Title" required>
 
-    <button>Submit</button>
-</form>
+        <textarea name="description" placeholder="Description" required></textarea>
+
+        <label>Category:</label>
+        <select name="category" required>
+            {% for c in categories %}
+            <option value="{{ c.category_id }}">{{ c.category_label }}</option>
+            {% endfor %}
+        </select>
+
+        <button>Submit</button>
+    </form>
+</div>
 
 {% endblock %}

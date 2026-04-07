@@ -1,0 +1,218 @@
+/* GLOBAL */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #F5F6F8;
+    color: #1A1A1A;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    height: 40px;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1F4E79;
+}
+
+.nav-right a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: #1F4E79;
+    font-weight: 500;
+}
+
+.nav-right a:hover {
+    color: #2EA8DF;
+}
+
+/* CONTAINER */
+.container {
+    padding: 30px 60px;
+}
+
+/* USER INFO */
+.user-info {
+    margin-bottom: 25px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* CARD (SaaS style) */
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* BUTTON */
+button {
+    background: linear-gradient(90deg, #2EA8DF, #1F4E79);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* FORM */
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* STATUS */
+.status-open {
+    background: #E6F7EF;
+    color: #2EAD5F;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status-closed {
+    background: #FFF3E6;
+    color: #F28C28;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* LINKS */
+a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* HEADINGS */
+h1, h2, h3 {
+    margin-top: 0;
+}
+
+/* FILTER BAR IMPROVEMENT */
+.card form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.card form select {
+    width: auto;
+    min-width: 150px;
+}
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #eee;
+    margin-top: 40px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* BETTER PAGE FEEL */
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* IMPROVED CARD LOOK */
+.card {
+    border: 1px solid #f0f0f0;
+}
+
+/* CLEANER HEADINGS */
+h1 {
+    font-size: 28px;
+    color: #1F4E79;
+}
+
+h2 {
+    font-size: 22px;
+    color: #1F4E79;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+/* SUBTLE TEXT */
+p {
+    line-height: 1.6;
+}
+
+/* LINK POLISH */
+.nav-right a {
+    position: relative;
+}
+
+.nav-right a::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #2EA8DF;
+    transition: 0.3s;
+}
+
+.nav-right a:hover::after {
+    width: 100%;
+}
+
+/* BUTTON POLISH */
+button {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* INPUT FOCUS EFFECT */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border: 1px solid #2EA8DF;
+    box-shadow: 0 0 0 2px rgba(46,168,223,0.1);
+}
+
+/* COMMENT TEXT STYLE */
+.card p b {
+    color: #1F4E79;
+}

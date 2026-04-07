@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Helpdesk</title>
+    <title>Helpdesk</title>
+    <link rel="stylesheet" href="static/style.css">
 
-<style>
-body { font-family: Arial; margin: 20px; }
-nav a { margin-right: 10px; }
-</style>
 
-</head>
 <body>
 
-<nav>
-<a href="/">Home</a> |
-<a href="/tickets">Tickets</a> |
-<a href="/create">Create</a> |
-<a href="/signup">Signup</a> |
-<a href="/login">Login</a> |
-<a href="/logout">Logout</a>
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="static/logo.png" alt="Company Logo">
+    </div>
+
+    <div class="nav-right">
+        <a href="/">Home</a>
+        <a href="/tickets">Tickets</a>
+        <a href="/create">Create</a>
+        <a href="/signup">Signup</a>
+        <a href="/login">Login</a>
+        <a href="/logout">Logout</a>
+    </div>
 </nav>
 
-<hr>
+<div class="container">
 
-{% if session.name %}
-<p>Logged in as <b>{{ session.name }}</b> ({{ session.role }})</p>
-{% endif %}
+    {% if session.name %}
+    <p class="user-info">
+        Logged in as <b>{{ session.name }}</b> ({{ session.role }})
+    </p>
+    {% endif %}
 
-{% block content %}{% endblock %}
+    {% block content %}{% endblock %}
 
+</div>
+<footer class="footer">
+    <p>© 2026 JYM Helpdesk • Built for efficiency</p>
+</footer>
 </body>
 </html>
