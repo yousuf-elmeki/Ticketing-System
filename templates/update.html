@@ -7,13 +7,19 @@
 
 <select name="status">
 {% for s in statuses %}
-<option value="{{ s.status_id }}">{{ s.status_label }}</option>
+<option value="{{ s.status_id }}"
+{% if s.status_id == ticket.status_id %}selected{% endif %}>
+{{ s.status_label }}
+</option>
 {% endfor %}
 </select>
 
 <select name="priority">
 {% for p in priorities %}
-<option value="{{ p.priority_id }}">{{ p.priority_level }}</option>
+<option value="{{ p.priority_id }}"
+{% if p.priority_id == ticket.priority_id %}selected{% endif %}>
+{{ p.priority_level }}
+</option>
 {% endfor %}
 </select>
 

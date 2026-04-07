@@ -5,6 +5,7 @@
 
 {% for ticket in tickets %}
 <div style="border:1px solid black; padding:10px; margin:10px;">
+    
     <h3>{{ ticket.title }}</h3>
     <p>{{ ticket.description }}</p>
 
@@ -12,8 +13,27 @@
     <p>Status: {{ ticket.status_label }}</p>
     <p>Priority: {{ ticket.priority_level }}</p>
 
+    <!-- UPDATE / DELETE -->
     <a href="/update/{{ ticket.ticket_id }}">Update</a> |
     <a href="/delete/{{ ticket.ticket_id }}">Delete</a>
+
+    <h4>Comments:</h4>
+
+    {% if ticket.comments %}
+        {% for c in ticket.comments %}
+            <p><b>{{ c.full_name }}:</b> {{ c.text }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No comments yet.</p>
+    {% endif %}
+
+    {% if session.role == "admin" %}
+    <form method="POST" action="/comment/{{ ticket.ticket_id }}">
+        <input name="text" placeholder="Add comment">
+        <button type="submit">Comment</button>
+    </form>
+    {% endif %}
+
 </div>
 {% endfor %}
 
