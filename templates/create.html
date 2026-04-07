@@ -6,6 +6,14 @@
 <form method="POST">
     <input name="title" placeholder="Title" required><br><br>
     <textarea name="description" placeholder="Description" required></textarea><br><br>
+
+    <label>Category:</label><br>
+    <select name="category" required>
+        {% for c in categories %}
+        <option value="{{ c.category_id }}">{{ c.category_label }}</option>
+        {% endfor %}
+    </select><br><br>
+
     <button>Submit</button>
 </form>
 

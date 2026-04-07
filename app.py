@@ -101,27 +101,41 @@ def tickets():
 
     cursor = db.cursor(dictionary=True)
 
-    # GET TICKETS
-    if session.get("role") == "admin":
-        cursor.execute("""
-            SELECT t.ticket_id, t.title, t.description,
-                   u.full_name, s.status_label, p.priority_level
-            FROM Ticket t
-            JOIN User u ON t.user_id = u.user_id
-            JOIN Status s ON t.status_id = s.status_id
-            JOIN Priority p ON t.priority_id = p.priority_id
-        """)
-    else:
-        cursor.execute("""
-            SELECT t.ticket_id, t.title, t.description,
-                   u.full_name, s.status_label, p.priority_level
-            FROM Ticket t
-            JOIN User u ON t.user_id = u.user_id
-            JOIN Status s ON t.status_id = s.status_id
-            JOIN Priority p ON t.priority_id = p.priority_id
-            WHERE t.user_id = %s
-        """, (session["user_id"],))
+    # FILTER VALUES
+    status = request.args.get("status")
+    priority = request.args.get("priority")
+    category = request.args.get("category")
 
+    query = """
+        SELECT t.ticket_id, t.title, t.description,
+               u.full_name, s.status_label, p.priority_level, c.category_label
+        FROM Ticket t
+        JOIN User u ON t.user_id = u.user_id
+        JOIN Status s ON t.status_id = s.status_id
+        JOIN Priority p ON t.priority_id = p.priority_id
+        LEFT JOIN Category c ON t.category_id = c.category_id
+        WHERE 1=1
+    """
+
+    params = []
+
+    if session.get("role") != "admin":
+        query += " AND t.user_id = %s"
+        params.append(session["user_id"])
+
+    if status:
+        query += " AND s.status_label = %s"
+        params.append(status)
+
+    if priority:
+        query += " AND p.priority_level = %s"
+        params.append(priority)
+
+    if category:
+        query += " AND c.category_label = %s"
+        params.append(category)
+
+    cursor.execute(query, tuple(params))
     tickets = cursor.fetchall()
 
     for ticket in tickets:
@@ -134,7 +148,23 @@ def tickets():
 
         ticket["comments"] = cursor.fetchall()
 
-    return render_template("tickets.html", tickets=tickets)
+    # LOAD FILTER DATA
+    cursor.execute("SELECT * FROM Status")
+    statuses = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Priority")
+    priorities = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM Category")
+    categories = cursor.fetchall()
+
+    return render_template(
+        "tickets.html",
+        tickets=tickets,
+        statuses=statuses,
+        priorities=priorities,
+        categories=categories
+    )
 
 # =========================
 # CREATE TICKET
@@ -144,22 +174,25 @@ def create_ticket():
     if "user_id" not in session:
         return redirect("/login")
 
+    cursor = db.cursor(dictionary=True)
+
     if request.method == "POST":
         title = request.form["title"]
         description = request.form["description"]
-
-        cursor = db.cursor()
+        category_id = request.form["category"]
 
         cursor.execute("""
-            INSERT INTO Ticket (title, description, user_id, status_id, priority_id)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (title, description, session["user_id"], 1, 1))
+            INSERT INTO Ticket (title, description, user_id, status_id, priority_id, category_id)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (title, description, session["user_id"], 1, 1, category_id))
 
         db.commit()
         return redirect("/tickets")
 
-    return render_template("create.html")
+    cursor.execute("SELECT * FROM Category")
+    categories = cursor.fetchall()
 
+    return render_template("create.html", categories=categories)
 # =========================
 # UPDATE TICKET (WITH PERMISSION)
 # =========================
@@ -180,16 +213,18 @@ def update_ticket(ticket_id):
     if request.method == "POST":
         status_id = request.form["status"]
         priority_id = request.form["priority"]
+        category_id = request.form["category"]
 
         cursor.execute("""
             UPDATE Ticket
-            SET status_id=%s, priority_id=%s
+            SET status_id=%s, priority_id=%s, category_id=%s
             WHERE ticket_id=%s
-        """, (status_id, priority_id, ticket_id))
+        """, (status_id, priority_id, category_id, ticket_id))
 
         db.commit()
         return redirect("/tickets")
 
+    # GET REQUEST
     cursor.execute("SELECT * FROM Ticket WHERE ticket_id=%s", (ticket_id,))
     ticket = cursor.fetchone()
 
@@ -199,13 +234,16 @@ def update_ticket(ticket_id):
     cursor.execute("SELECT * FROM Priority")
     priorities = cursor.fetchall()
 
+    cursor.execute("SELECT * FROM Category")
+    categories = cursor.fetchall()
+
     return render_template(
         "update.html",
         ticket=ticket,
         statuses=statuses,
-        priorities=priorities
+        priorities=priorities,
+        categories=categories
     )
-
 # =========================
 # DELETE TICKET
 # =========================

@@ -23,6 +23,15 @@
 {% endfor %}
 </select>
 
+<select name="category">
+{% for c in categories %}
+<option value="{{ c.category_id }}"
+{% if c.category_id == ticket.category_id %}selected{% endif %}>
+{{ c.category_label }}
+</option>
+{% endfor %}
+</select>
+
 <br><br>
 <button>Update</button>
 
