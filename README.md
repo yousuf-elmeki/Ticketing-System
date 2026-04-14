@@ -1,52 +1,81 @@
-# Help Desk Ticket System
+# Ticketing System
 
-This project is a Flask-based help desk application backed by MySQL. Users can sign up, log in, create support tickets, and view or update tickets based on their role.
+##  Project Overview
+This project is a web-based Ticketing System designed to simulate a real-world IT support/helpdesk workflow. It allows users to create, manage, and track support tickets, while administrators handle issue resolution and system oversight.
 
-## Features
+The system demonstrates full-stack development concepts, role-based access control, cloud deployment, and automated deployment workflows.
 
-- User signup and login
-- Session-based authentication
-- Ticket creation, filtering, updating, and deletion
-- Admin-only commenting
-- Category, priority, and status support
+---
 
-## Tech Stack
+##  Key Features
+- User authentication and role-based access control (User / Admin)
+- Ticket creation, updating, and deletion
+- Ticket status tracking (e.g., Open, In Progress, Resolved)
+- Priority assignment for tickets
+- Admin dashboard for managing all tickets
+- Structured workflow for issue resolution
 
-- Python
-- Flask
-- MySQL
-- Jinja templates
+---
 
-## Setup
+##  Cloud Deployment (AWS EC2)
+The application was deployed on an **Amazon Web Services (AWS) EC2 instance**, providing a cloud-based environment for hosting the backend system.
 
-1. Create and activate a virtual environment.
-2. Install dependencies:
+The EC2 instance served as the runtime environment for:
+- The Flask backend application
+- The application database (or database-connected services)
+- Webhook-based deployment automation
 
-```bash
-pip install -r requirements.txt
-```
+---
 
-3. Copy `.env.example` to `.env` and set your local values:
+##  Webhook-Based Auto Deployment
 
-```env
-FLASK_SECRET_KEY=replace-with-a-random-secret
-DB_HOST=127.0.0.1
-DB_USER=root
-DB_PASSWORD=your-password
-DB_NAME=helpdesk
-```
+This project includes a webhook-based automation script that enables lightweight continuous deployment.
 
-4. Make sure your MySQL database contains the tables used by the app:
-   `User`, `Ticket`, `Comment`, `Status`, `Priority`, and `Category`.
+A Flask-based webhook service listens for POST requests on a dedicated endpoint (`/update`). When triggered, it automatically:
 
-5. Run the app:
+- Pulls the latest code from the Git repository on the EC2 instance
+- Stops the currently running application process
+- Restarts the application with the updated codebase
 
-```bash
-python app.py
-```
+This simulates a basic CI/CD pipeline by automating deployment steps without manual server intervention.
 
-The default local URL is `http://127.0.0.1:5000`.
+---
 
-## Security Note
+##  Technologies Used
+- Backend: Flask (Python)
+- Frontend: HTML, CSS, JavaScript
+- Database: (MySQL / SQLite – hosted or connected via EC2 environment)
+- Cloud: Amazon AWS EC2
+- Version Control: Git / GitHub
+- Deployment: Linux (Ubuntu on EC2)
 
-Sensitive values such as the Flask secret key and database credentials should never be committed directly into source control. This repository is now set up to load them from environment variables instead.
+---
+
+##  My Contributions
+This project was completed in a group. My specific contributions include:
+
+- Developed core ticket management functionality (create, update, and track tickets)
+- Implemented ticket status workflow and priority handling
+- Configured and deployed the application on AWS EC2
+- Built webhook-based automation for deployment updates
+- Assisted with backend debugging and system integration
+- Contributed to testing and validation of application features
+
+---
+
+##  Key Learnings
+- Cloud deployment using AWS EC2
+- Full-stack application architecture
+- Role-based access control systems
+- Webhook-based automation and deployment workflows
+- Linux server management and process handling
+- Collaborative development using Git and GitHub
+
+---
+
+##  Future Improvements
+- Use Docker or systemd for safer deployment management
+- Move to managed AWS services (RDS for database, Elastic Beanstalk for deployment)
+- Add email/notification system for ticket updates
+- Improve UI/UX design for dashboard interface
+- Add logging and monitoring for webhook events
