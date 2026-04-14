@@ -1,7 +1,10 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, session
 import mysql.connector
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "change-me-in-production")
